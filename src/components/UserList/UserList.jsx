@@ -5,10 +5,12 @@ import cx from 'classnames'
 import { useLatestMessages } from '@/hooks'
 import { usersWithoutCurrent, usersList } from '@/utils'
 
+// eslint-disable-next-line no-unused-vars
 import { UserProfile } from '@/components/UserProfile'
 
 import './_user-list.scss'
 
+// eslint-disable-next-line no-unused-vars
 function User ({ icon, name, lastActive, isOnline, userId, color }) {
   const { latestMessages, selectUser, selectedUser } = useLatestMessages()
 

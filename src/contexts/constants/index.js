@@ -1,7 +1,5 @@
-import INITIAL_CAROL_MESSAGE from '@/constants/initialCarolMessage'
-
 export const initialMessages = {
-  bot: INITIAL_CAROL_MESSAGE,
+  bot: 'Hi! My name\'s Carol.',
   brandon: 'Hello there!',
   clayton: 'Yes of course. Thanks',
   bernice: 'This is a question regarding the fun time we had.',

@@ -1,4 +1,4 @@
-import { UserProfile } from '@/components/UserProfile'
+import { UserProfile } from '@/components/UserProfile' // eslint-disable-line no-unused-vars
 import { useLatestMessages } from '@/hooks'
 
 export default function Header () {

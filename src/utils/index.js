@@ -20,4 +20,10 @@ export const getInitials = (string) => {
   return string.match(/\b(\w)/g).slice(0, 2).join('').toUpperCase()
 }
 
+export const randomIncrementalId = () => {
+  const d = new Date()
+
+  return d.valueOf()
+}
+
 export * from './users'

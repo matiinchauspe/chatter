@@ -1,6 +1,8 @@
 import { useState, useCallback, useMemo } from 'react'
 
-import { userById, usersList } from '@/utils'
+import { USERS } from '@/constants'
+import { userById, usersList, randomIncrementalId } from '@/utils'
+// eslint-disable-next-line no-unused-vars
 import { LatestMessagesProvider as LatestMessagesProv, initialMessages } from '@/contexts'
 
 export default function LatestMessagesProvider ({ children }) {
@@ -10,31 +12,50 @@ export default function LatestMessagesProvider ({ children }) {
     setLastMessages((prevMessages) => ({ ...prevMessages, [userId]: value }))
   }, [])
 
-  // chat messages
-  const [chatMessages, setChatMessages] = useState()
-  const handleSetChatMessages = useCallback(({ userId, user }, message) => {
-    setChatMessages((prevMessages) => {
-      return {
-        ...prevMessages,
-        [userId]: {
-          user,
-          messages: [...prevMessages[userId].messages, message]
-        }
-      }
-    })
-  }, [])
-
   // selected user
-  const [bot] = userById(usersList, 'bot')
-  const [selectedUser, setSelectedUser] = useState(bot)
+  const [bot] = userById(usersList, USERS.BOT)
+  const [selectedUser, setSelectedUser] = useState(() => bot)
 
   const handleSelectUser = (userId) => {
     const [userSelected] = userById(usersList, userId)
 
     setSelectedUser(userSelected)
+    setChatMessages({
+      ...chatMessages,
+      [userSelected.userId]: chatMessages[userId] ?? []
+    })
   }
 
-  console.log(selectedUser)
+  // chat messages
+  const initialChatMessages = useMemo(() => {
+    const messages = {}
+    usersList.forEach(({ userId, lastMessage }) => {
+      messages[userId] = [{
+        id: randomIncrementalId(),
+        user: userId,
+        content: lastMessage
+      }]
+    })
+
+    return messages
+  }, [])
+  const [chatMessages, setChatMessages] = useState(initialChatMessages)
+  const handleSetChatMessages = useCallback((userId, message) => {
+    setChatMessages((prev) => ({
+      ...prev,
+      [selectedUser.userId]: [
+        ...(prev[selectedUser.userId] ? prev[selectedUser.userId] : []),
+        {
+          id: randomIncrementalId(),
+          user: userId,
+          content: message
+        }
+      ]
+    }))
+  }, [selectedUser.userId])
+
+  console.log({ chatMessages })
+  console.log({ selectedUser })
 
   const providerValue = useMemo(() => ({
     // latest chat messages

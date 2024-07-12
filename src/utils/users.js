@@ -1,8 +1,51 @@
 export const usersList = [
-  { name: 'Carol', userId: 'bot', icon: 'fas fa-comment-dots', isOnline: true, color: '#4DB8EF', mail: 'carol@reactcodingchallenges.com', phone: '0498365942', labels: ['Bot', 'React'], attachments: [] },
-  { name: 'Brandon Andrews', userId: 'brandon', isOnline: false, lastActive: '3 hours ago', color: '#DD95BA', lastMessage: 'Hello there!', email: 'brandon@reactcodingchallenges.com', phone: '0498365942', labels: ['User'], attachments: [] },
-  { name: 'Clayton Day', userId: 'clayton', isOnline: false, lastActive: 'Yesterday', color: '#62D5D1', lastMessage: 'Yes of course. Thanks', email: 'clayton@reactcodingchallenges.com', phone: '0498365942', labels: ['User'], attachments: [] },
-  { name: 'Bernice Clark', userId: 'bernice', isOnline: true, color: '#82D39F', lastMessage: 'This is a question regarding the', email: 'bernice@reactcodingchallenges.com', phone: '0498365333', labels: ['User'], attachments: [] },
+  {
+    name: 'Carol',
+    userId: 'bot',
+    icon: 'fas fa-comment-dots',
+    isOnline: true,
+    color: '#4DB8EF',
+    lastMessage: 'Hi! My name\'s Carol.',
+    email: 'carol@reactcodingchallenges.com',
+    phone: '0498365942',
+    labels: ['Bot', 'React'],
+    attachments: []
+  },
+  {
+    name: 'Brandon Andrews',
+    userId: 'brandon',
+    isOnline: false,
+    lastActive: '3 hours ago',
+    color: '#DD95BA',
+    lastMessage: 'Hello there!',
+    email: 'brandon@reactcodingchallenges.com',
+    phone: '0498365942',
+    labels: ['User'],
+    attachments: []
+  },
+  {
+    name: 'Clayton Day',
+    userId: 'clayton',
+    isOnline: false,
+    lastActive: 'Yesterday',
+    color: '#62D5D1',
+    lastMessage: 'Yes of course. Thanks',
+    email: 'clayton@reactcodingchallenges.com',
+    phone: '0498365942',
+    labels: ['User'],
+    attachments: []
+  },
+  {
+    name: 'Bernice Clark',
+    userId: 'bernice',
+    isOnline: true,
+    color: '#82D39F',
+    lastMessage: 'This is a question regarding the',
+    email: 'bernice@reactcodingchallenges.com',
+    phone: '0498365333',
+    labels: ['User'],
+    attachments: []
+  },
   {
     name: 'Christine Fields',
     userId: 'christine',

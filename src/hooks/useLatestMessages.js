@@ -2,7 +2,7 @@ import { useContext } from 'react'
 
 import { LatestMessagesContext } from '@/contexts'
 
-export function useLatestMessages () {
+export const useLatestMessages = () => {
   const context = useContext(LatestMessagesContext)
 
   if (!context) {

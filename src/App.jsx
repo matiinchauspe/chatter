@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Router, Route, Redirect } from 'wouter'
 
 import { CoreLayout } from '@/layouts'

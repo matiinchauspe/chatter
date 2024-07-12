@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'wouter'
+import { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 import useSound from 'use-sound'
 
-// import LatestMessagesContext from '../../../contexts/LatestMessages/LatestMessages';
-
-import { userById, usersList } from '@/utils'
 import config from '@/config'
+import { USERS, EVENTS } from '@/constants'
 import { useLatestMessages } from '@/hooks'
 
+/* eslint-disable no-unused-vars */ // have a problem here 🤔
 import TypingMessage from './TypingMessage'
 import Header from './Header'
 import Footer from './Footer'
@@ -20,45 +18,59 @@ import './_messages.scss'
 //   config.BOT_SERVER_ENDPOINT,
 //   { transports: ['websocket', 'polling', 'flashsocket'] }
 // );
-const socket = io('http://localhost:4001', { transports: ['websocket', 'polling', 'flashsocket'] })
+const socket = io('http://localhost:4001', {
+  transports: ['websocket', 'polling', 'flashsocket']
+})
 
 function Messages () {
   const [inputValue, setInputValue] = useState('')
   const [botTyping, setBotTyping] = useState(false)
 
-  const params = useParams()
-  const currentUserId = params.userId
+  // const params = useParams()
+  // const senderUserId = params.userId
 
   const [playSend] = useSound(config.SEND_AUDIO_URL)
   const [playReceive] = useSound(config.RECEIVE_AUDIO_URL)
 
-  const { setLatestMessage, chatMessages, setChatMessages, selectedUser } = useLatestMessages()
+  const { setLatestMessage, chatMessages, setChatMessages, selectedUser } =
+    useLatestMessages()
 
   useEffect(() => {
-    socket.on('bot-message', (message) => {
-      setLatestMessage('bot', message)
-      setChatMessages(selectedUser, message)
-      setChatMessages(userById(usersList, currentUserId), message)
+    socket.on(EVENTS.BOT_MESSAGE, (message) => {
+      setLatestMessage(USERS.BOT, message)
+      // selected user chats
+      setChatMessages(USERS.BOT, message)
+      // bot typing state
       setBotTyping(false)
 
       playReceive()
     })
 
-    socket.on('bot-typing', () => {
+    socket.on(EVENTS.BOT_TYPING, () => {
       setBotTyping(true)
     })
 
     return () => {
-      socket.off('bot-message')
-      socket.off('bot-typing')
+      socket.off(EVENTS.BOT_MESSAGE)
+      socket.off(EVENTS.BOT_TYPING)
     }
   })
 
-  const handleSendMessage = (e) => {
-    if (!inputValue) { return }
+  const handleSendMessage = () => {
+    if (!inputValue) {
+      return
+    }
 
-    socket.emit('user-message', inputValue)
+    // this one only will act for bot
+    if (selectedUser.userId === USERS.BOT) {
+      socket.emit(EVENTS.USER_MESSAGE, inputValue)
+    } else {
+      // I need to do this for the other users
+    }
+
     setInputValue('')
+    // sender user chats
+    setChatMessages(USERS.ME, inputValue)
 
     playSend()
   }
@@ -71,16 +83,21 @@ function Messages () {
     <div className='messages'>
       <Header />
       <div className='messages__list' id='message-list'>
-        {(chatMessages?.messages || []).map((message, index) => (
+        {(chatMessages[selectedUser.userId] || []).map((message, index) => (
           <Message
             key={message.id}
             message={message}
-            nextMessage={chatMessages[currentUserId].messages[index + 1]}
+            nextMessage={Boolean(chatMessages[index + 1])}
+            botTyping={botTyping}
           />
         ))}
         {botTyping && <TypingMessage />}
       </div>
-      <Footer message={inputValue} sendMessage={handleSendMessage} onChangeMessage={handleChangeMessage} />
+      <Footer
+        message={inputValue}
+        sendMessage={handleSendMessage}
+        onChangeMessage={handleChangeMessage}
+      />
     </div>
   )
 }
