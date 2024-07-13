@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import io from 'socket.io-client'
+import { useParams } from 'wouter'
+import { io } from 'socket.io-client'
 import useSound from 'use-sound'
 
 import config from '@/config'
 import { USERS, EVENTS } from '@/constants'
 import { useLatestMessages } from '@/hooks'
-
-/* eslint-disable no-unused-vars */ // have a problem here 🤔
+/* eslint-disable no-unused-vars */
 import TypingMessage from './TypingMessage'
 import Header from './Header'
 import Footer from './Footer'
@@ -20,14 +20,17 @@ import './_messages.scss'
 // );
 const socket = io('http://localhost:4001', {
   transports: ['websocket', 'polling', 'flashsocket']
+  // query: {
+  //   userId,
+  // }
 })
 
-function Messages () {
+const Messages = () => {
   const [inputValue, setInputValue] = useState('')
   const [botTyping, setBotTyping] = useState(false)
 
-  // const params = useParams()
-  // const senderUserId = params.userId
+  const params = useParams()
+  const senderUserId = params.userId
 
   const [playSend] = useSound(config.SEND_AUDIO_URL)
   const [playReceive] = useSound(config.RECEIVE_AUDIO_URL)
@@ -36,12 +39,23 @@ function Messages () {
     useLatestMessages()
 
   useEffect(() => {
+    socket.emit(EVENTS.SENDER_ROOM, senderUserId)
+
     socket.on(EVENTS.BOT_MESSAGE, (message) => {
+      debugger // eslint-disable-line
       setLatestMessage(USERS.BOT, message)
       // selected user chats
       setChatMessages(USERS.BOT, message)
       // bot typing state
       setBotTyping(false)
+
+      playReceive()
+    })
+
+    socket.on(EVENTS.USER_MESSAGE, (message) => {
+      setLatestMessage(selectedUser.userId, message)
+      // selected user chats
+      setChatMessages(USERS.ME, message)
 
       playReceive()
     })
@@ -54,7 +68,7 @@ function Messages () {
       socket.off(EVENTS.BOT_MESSAGE)
       socket.off(EVENTS.BOT_TYPING)
     }
-  })
+  }, [])
 
   const handleSendMessage = () => {
     if (!inputValue) {
@@ -63,7 +77,7 @@ function Messages () {
 
     // this one only will act for bot
     if (selectedUser.userId === USERS.BOT) {
-      socket.emit(EVENTS.USER_MESSAGE, inputValue)
+      socket.emit(EVENTS.USER_MESSAGE, { message: inputValue, sender: senderUserId })
     } else {
       // I need to do this for the other users
     }

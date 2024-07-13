@@ -5,7 +5,7 @@ import { userById, usersList, randomIncrementalId } from '@/utils'
 // eslint-disable-next-line no-unused-vars
 import { LatestMessagesProvider as LatestMessagesProv, initialMessages } from '@/contexts'
 
-export default function LatestMessagesProvider ({ children }) {
+const LatestMessagesProvider = ({ children }) => {
   // latest chat messages
   const [lastMessages, setLastMessages] = useState(initialMessages)
   const handleSetLatestMessage = useCallback((userId, value) => {
@@ -85,3 +85,5 @@ export default function LatestMessagesProvider ({ children }) {
     </LatestMessagesProv>
   )
 }
+
+export default LatestMessagesProvider

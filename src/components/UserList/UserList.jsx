@@ -5,13 +5,12 @@ import cx from 'classnames'
 import { useLatestMessages } from '@/hooks'
 import { usersWithoutCurrent, usersList } from '@/utils'
 
-// eslint-disable-next-line no-unused-vars
 import { UserProfile } from '@/components/UserProfile'
 
 import './_user-list.scss'
 
 // eslint-disable-next-line no-unused-vars
-function User ({ icon, name, lastActive, isOnline, userId, color }) {
+const User = ({ icon, name, lastActive, isOnline, userId, color }) => {
   const { latestMessages, selectUser, selectedUser } = useLatestMessages()
 
   const handleClickOnUser = () => {
@@ -38,7 +37,7 @@ function User ({ icon, name, lastActive, isOnline, userId, color }) {
   )
 }
 
-export default function UserList () {
+const UserList = () => {
   const params = useParams()
   const currentUserId = params.userId ?? 'brandon'
 
@@ -61,3 +60,5 @@ export default function UserList () {
     </div>
   )
 }
+
+export default UserList

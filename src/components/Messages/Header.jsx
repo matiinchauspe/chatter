@@ -1,7 +1,7 @@
 import { UserProfile } from '@/components/UserProfile' // eslint-disable-line no-unused-vars
 import { useLatestMessages } from '@/hooks'
 
-export default function Header () {
+const Header = () => {
   const { selectedUser } = useLatestMessages()
 
   const isBot = selectedUser.userId === 'bot'
@@ -36,3 +36,5 @@ export default function Header () {
     </div>
   )
 }
+
+export default Header

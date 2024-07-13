@@ -8,7 +8,7 @@ import { useLatestMessages } from '@/hooks'
 
 import './_contact-panel.scss'
 
-export default function ContactPanel () {
+const ContactPanel = () => {
   const [minimised, setMinimised] = useState(Boolean(localStorage.getItem('minimised')))
 
   const { selectedUser } = useLatestMessages()
@@ -65,3 +65,5 @@ export default function ContactPanel () {
     </div>
   )
 }
+
+export default ContactPanel
