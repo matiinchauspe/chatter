@@ -1,35 +1,24 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'wouter'
-import { io } from 'socket.io-client'
 import useSound from 'use-sound'
 
 import receive from '@/assets/receive.mp3'
 import send from '@/assets/send.mp3'
 
 import { USERS, EVENTS } from '@/constants'
-import { useLatestMessages } from '@/hooks'
+import { useChat, useSocket } from '@/hooks'
 /* eslint-disable no-unused-vars */
-import TypingMessage from './TypingMessage'
-import Header from './Header'
-import Footer from './Footer'
-import Message from './Message'
+import { Header } from './Header'
+import { Footer } from './Footer'
+import { MessagesList } from './MessagesList'
 
-import './_messages.scss'
+import './_chat-layout.scss'
 
-// const socket = io(
-//   config.BOT_SERVER_ENDPOINT,
-//   { transports: ['websocket', 'polling', 'flashsocket'] }
-// );
-const socket = io('/', {
-  transports: ['websocket', 'polling', 'flashsocket']
-})
-
-const Messages = () => {
+const ChatLayout = () => {
   const [inputValue, setInputValue] = useState('')
   const [botTyping, setBotTyping] = useState(false)
 
-  // chat ref
-  const chatRef = useRef(null)
+  const socket = useSocket()
 
   const params = useParams()
   const senderUserId = params.userId
@@ -38,32 +27,32 @@ const Messages = () => {
   const [playReceive] = useSound(receive)
 
   const { setLatestMessage, chatMessages, setChatMessages, selectedUser } =
-    useLatestMessages()
+    useChat()
 
   useEffect(() => {
     socket.emit(EVENTS.SENDER_ROOM, senderUserId)
 
     socket.on(EVENTS.BOT_MESSAGE, (message) => {
       setLatestMessage(USERS.BOT, message)
-      // selected user chats
       setChatMessages({ userId: USERS.BOT, message })
-      // bot typing state
       setBotTyping(false)
 
       playReceive()
     })
 
-    socket.on(EVENTS.USER_MESSAGE, (message) => {
-      setLatestMessage(selectedUser.userId, message)
+    socket.on(EVENTS.USER_BOT_MESSAGE, (message) => {
       // selected user chats
       setChatMessages({ userId: USERS.ME, message })
+      // update latest message
+      setLatestMessage(selectedUser.userId, message)
     })
 
     // private messages between users
-    socket.on('receive-user-private-message', ({ message, sender }) => {
-      // setLatestMessage(sender, message)
+    socket.on(EVENTS.USER_PRIVATE_MESSAGE, ({ message, sender }) => {
       // selected user chats
       setChatMessages({ userId: sender, message, userIdAsKey: true })
+      // update latest message
+      setLatestMessage(sender, message)
     })
 
     socket.on(EVENTS.BOT_TYPING, () => {
@@ -76,16 +65,6 @@ const Messages = () => {
     }
   }, [])
 
-  useLayoutEffect(() => {
-    const chatList = chatRef.current
-    if (chatList) {
-      chatList.scrollTo({
-        top: chatList.scrollHeight,
-        behavior: 'smooth'
-      })
-    }
-  }, [chatMessages[selectedUser.userId].length])
-
   const handleSendMessage = () => {
     if (!inputValue) {
       return
@@ -93,18 +72,19 @@ const Messages = () => {
 
     // This one only will act for bot
     if (selectedUser.userId === USERS.BOT) {
-      socket.emit(EVENTS.USER_MESSAGE, { message: inputValue, sender: senderUserId })
+      socket.emit(EVENTS.USER_BOT_MESSAGE, { message: inputValue, sender: senderUserId })
     } else {
-      socket.emit('user-private-message', {
+      socket.emit(EVENTS.USER_PRIVATE_MESSAGE, {
         message: inputValue,
         sender: senderUserId,
         receiver: selectedUser.userId
       })
     }
-
     setInputValue('')
     // sender user chats
     setChatMessages({ userId: USERS.ME, message: inputValue })
+    // update latest message
+    setLatestMessage(selectedUser.userId, inputValue)
 
     playSend()
   }
@@ -114,19 +94,9 @@ const Messages = () => {
   }
 
   return (
-    <div className='messages'>
+    <div className='chat'>
       <Header />
-      <div className='messages__list' id='message-list' ref={chatRef}>
-        {(chatMessages[selectedUser.userId] || []).map((message, index) => (
-          <Message
-            key={message.id}
-            message={message}
-            nextMessage={Boolean(chatMessages[index + 1])}
-            botTyping={botTyping}
-          />
-        ))}
-        {botTyping && <TypingMessage />}
-      </div>
+      <MessagesList messages={chatMessages[selectedUser.userId] || []} botTyping={botTyping} />
       <Footer
         message={inputValue}
         sendMessage={handleSendMessage}
@@ -136,4 +106,4 @@ const Messages = () => {
   )
 }
 
-export default Messages
+export default ChatLayout

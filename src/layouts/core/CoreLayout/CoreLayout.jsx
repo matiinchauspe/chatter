@@ -1,20 +1,23 @@
-import { LatestMessagesProvider } from '@/components/LatestMessagesProvider'
+/* eslint-disable no-unused-vars */
+import { ChatLayout } from '@/layouts'
+import { SocketProvider, ChatProvider } from '@/components/_providers'
 import { ContactPanel } from '@/components/ContactPanel'
-import UserList from '@/components/UserList'
-import { Messages } from '@/components/Messages'
-import { IconBackground } from '../IconBackground'
+import { UserList } from '@/components/UserList'
+import { IconBackground } from './IconBackground'
 
 import './_core-layout.scss'
 
-export default function CoreLayout () {
-  return (
-    <div className='core'>
+const CoreLayout = () => (
+  <div className='core'>
+    <SocketProvider>
       <IconBackground />
-      <LatestMessagesProvider>
+      <ChatProvider>
         <UserList />
-        <Messages />
+        <ChatLayout />
         <ContactPanel />
-      </LatestMessagesProvider>
-    </div>
-  )
-}
+      </ChatProvider>
+    </SocketProvider>
+  </div>
+)
+
+export default CoreLayout

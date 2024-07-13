@@ -1,16 +1,21 @@
 import { useState, useCallback, useMemo } from 'react'
 
 import { USERS } from '@/constants'
-import { userById, usersList, randomIncrementalId } from '@/utils'
+import { userById, randomIncrementalId } from '@/utils'
+import { useUpdateUsersBasedOnEvents, useSocket, useLastMessages } from '@/hooks'
 // eslint-disable-next-line no-unused-vars
-import { LatestMessagesProvider as LatestMessagesProv, initialMessages } from '@/contexts'
+import { ChatProvider as ChatProviderContext } from '@/contexts'
 
-const LatestMessagesProvider = ({ children }) => {
+const ChatProvider = ({ children }) => {
   // latest chat messages
-  const [lastMessages, setLastMessages] = useState(initialMessages)
+  const [lastMessages, setLastMessages] = useLastMessages()
+
   const handleSetLatestMessage = useCallback((userId, value) => {
     setLastMessages((prevMessages) => ({ ...prevMessages, [userId]: value }))
   }, [])
+
+  const socket = useSocket()
+  const usersList = useUpdateUsersBasedOnEvents(socket)
 
   // chat messages
   const initialChatMessages = useMemo(() => {
@@ -58,9 +63,6 @@ const LatestMessagesProvider = ({ children }) => {
     })
   }
 
-  console.log({ chatMessages })
-  console.log({ selectedUser })
-
   const providerValue = useMemo(() => ({
     // latest chat messages
     latestMessages: lastMessages,
@@ -84,10 +86,10 @@ const LatestMessagesProvider = ({ children }) => {
   ])
 
   return (
-    <LatestMessagesProv value={providerValue}>
+    <ChatProviderContext value={providerValue}>
       {children}
-    </LatestMessagesProv>
+    </ChatProviderContext>
   )
 }
 
-export default LatestMessagesProvider
+export default ChatProvider

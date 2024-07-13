@@ -38,7 +38,8 @@ export const usersList = [
   {
     name: 'Bernice Clark',
     userId: 'bernice',
-    isOnline: true,
+    isOnline: false,
+    lastActive: '2 days ago',
     color: '#82D39F',
     lastMessage: 'This is a question regarding the',
     email: 'bernice@reactcodingchallenges.com',
@@ -49,7 +50,7 @@ export const usersList = [
   {
     name: 'Christine Fields',
     userId: 'christine',
-    isOnline: true,
+    isOnline: false,
     lastActive: 'Jul 28',
     color: '#FFBB75',
     lastMessage: 'Do you need help with the price?',

@@ -20,7 +20,8 @@ export default ({ mode }) => {
         '/socket.io': {
           target: `${process.env.VITE_API_URL}:${process.env.VITE_PORT}`,
           ws: true
-        }
+        },
+        '/api': `${process.env.VITE_API_URL}:${process.env.VITE_PORT}`
       }
     },
     build: {

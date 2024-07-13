@@ -1,4 +1,4 @@
-export default [
+export const icons = [
   { name: 'far fa-circle', maxSize: 40 },
   { name: 'fas fa-circle', minSize: 7, maxSize: 10 },
   { name: 'far fa-star', maxSize: 40 },

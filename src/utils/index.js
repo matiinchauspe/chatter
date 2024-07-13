@@ -27,3 +27,5 @@ export const randomIncrementalId = () => {
 }
 
 export * from './users'
+export * from './messages' // put in the backend later
+export * from './icons'

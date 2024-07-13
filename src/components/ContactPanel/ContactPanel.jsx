@@ -4,14 +4,14 @@ import { useState } from 'react'
 import cx from 'classnames'
 
 import { getInitials } from '@/utils'
-import { useLatestMessages } from '@/hooks'
+import { useChat } from '@/hooks'
 
 import './_contact-panel.scss'
 
 const ContactPanel = () => {
   const [minimised, setMinimised] = useState(Boolean(localStorage.getItem('minimised')))
 
-  const { selectedUser } = useLatestMessages()
+  const { selectedUser } = useChat()
 
   const isBot = selectedUser.userId === 'bot'
 

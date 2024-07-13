@@ -1,0 +1,49 @@
+.message {
+  padding: 20px;
+  border-radius: 25px;
+  font-weight: 500;
+  width: fit-content;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  max-width: 60%;
+  word-break: break-word;
+  padding-top: 15px;
+  padding-bottom: 12px;
+
+  &--last:not(&--me) {
+    border-bottom-left-radius: 0;
+  }
+
+  &--last.messages__message--me {
+    border-bottom-right-radius: 0;
+  }
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  ~.messages__message:not(.messages__message--me) {
+    margin-bottom: -5px;
+  }
+
+  &--typing {
+    min-width: 100px;
+    border-bottom-left-radius: 0;
+  }
+
+  &--me {
+    background: #3898EB;
+    color: white;
+    margin-left: auto;
+    border-bottom-left-radius: 25px;
+
+    ~.messages__message--me {
+      margin-top: -5px;
+    }
+  }
+
+  &:not(&--me) {
+    background: white;
+    color: #29475C;
+  }
+}

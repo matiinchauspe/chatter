@@ -2,16 +2,16 @@ import { useMemo } from 'react'
 import { useParams } from 'wouter'
 import cx from 'classnames'
 
-import { useLatestMessages } from '@/hooks'
-import { usersWithoutCurrent, usersList } from '@/utils'
-
+import { useChat, useUpdateUsersBasedOnEvents, useSocket } from '@/hooks'
+import { usersWithoutCurrent } from '@/utils'
+// eslint-disable-next-line no-unused-vars
 import { UserProfile } from '@/components/UserProfile'
 
 import './_user-list.scss'
 
 // eslint-disable-next-line no-unused-vars
 const User = ({ icon, name, lastActive, isOnline, userId, color }) => {
-  const { latestMessages, selectUser, selectedUser } = useLatestMessages()
+  const { latestMessages, selectUser, selectedUser } = useChat()
 
   const handleClickOnUser = () => {
     selectUser(userId)
@@ -40,6 +40,9 @@ const User = ({ icon, name, lastActive, isOnline, userId, color }) => {
 const UserList = () => {
   const params = useParams()
   const currentUserId = params.userId ?? 'brandon'
+
+  const socket = useSocket()
+  const usersList = useUpdateUsersBasedOnEvents(socket)
 
   const users = useMemo(() => {
     return usersWithoutCurrent(usersList, currentUserId)

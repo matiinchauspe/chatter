@@ -1,1 +1,2 @@
-export * from './lastMessages'
+export * from './chat'
+export * from './socket'

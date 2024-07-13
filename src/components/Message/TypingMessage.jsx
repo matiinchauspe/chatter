@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import './_message.scss'
+
 const Typing = () => {
   const [numberOfDots, setDots] = useState(1)
 
@@ -17,7 +19,7 @@ const Typing = () => {
 
   return (
     <p
-      className='messages__message messages__message--typing'
+      className='message message--typing'
       key='typing'
     >
       {`Typing${''.padStart(numberOfDots, '.')}`}

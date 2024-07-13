@@ -2,14 +2,16 @@ import cx from 'classnames'
 
 import { USERS } from '@/constants'
 
+import './_message.scss'
+
 const Message = ({ nextMessage, message, botTyping }) => (
   <p
     className={cx(
-      'messages__message',
+      'message',
       'animate__animated animate__rubberBand',
       {
-        'messages__message--me': message.user === USERS.ME,
-        'messages__message--last': (!nextMessage && (!botTyping || message.user === USERS.ME)) ||
+        'message--me': message.user === USERS.ME,
+        'message--last': (!nextMessage && (!botTyping || message.user === USERS.ME)) ||
           (nextMessage && nextMessage.user !== message.user)
       }
     )}

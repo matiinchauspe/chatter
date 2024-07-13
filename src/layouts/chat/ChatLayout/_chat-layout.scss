@@ -1,6 +1,6 @@
 @import 'vars';
 
-.messages {
+.chat {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -45,7 +45,7 @@
 
     &__left-content {
       &__text {
-        > h1 {
+        >h1 {
           display: flex;
           align-items: center;
           margin: 0;
@@ -54,7 +54,7 @@
           font-size: 24px;
         }
 
-        > p {
+        >p {
           margin: 0;
           color: #80909B;
           font-size: 18px;
@@ -63,7 +63,7 @@
         }
       }
 
-      > .user-profile {
+      >.user-profile {
         @media only screen and (max-width: 700px) {
           display: none;
         }
@@ -76,7 +76,7 @@
       align-items: center;
       color: #3D5364;
 
-      > i {
+      >i {
         margin-right: 10px;
         font-size: 20px;
         color: #8191A0;
@@ -86,7 +86,7 @@
         }
       }
 
-      > p {
+      >p {
         font-size: 18px;
       }
 
@@ -134,10 +134,10 @@
       align-items: center;
 
       @media only screen and (max-width: 700px) {
-       margin-left: auto;
+        margin-left: auto;
       }
 
-      > i {
+      >i {
         font-size: 25px;
         color: #8194A4;
         margin-right: 20px;
@@ -154,7 +154,7 @@
         }
       }
 
-      > button {
+      >button {
         background: none;
         border: 0;
         color: #3898EB;
@@ -180,7 +180,7 @@
       }
     }
 
-    > input {
+    >input {
       flex: 1;
       margin-right: 20px;
       height: 50px;
@@ -218,7 +218,7 @@
       margin-bottom: 0;
     }
 
-    ~ .messages__message:not(.messages__message--me) {
+    ~.messages__message:not(.messages__message--me) {
       margin-bottom: -5px;
     }
 
@@ -233,7 +233,7 @@
       margin-left: auto;
       border-bottom-left-radius: 25px;
 
-      ~ .messages__message--me {
+      ~.messages__message--me {
         margin-top: -5px;
       }
     }

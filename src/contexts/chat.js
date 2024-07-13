@@ -1,10 +1,8 @@
 import { createContext } from 'react'
 
-import { initialMessages } from './constants'
-
 const initialState = {
   // latest chat messages
-  latestMessages: initialMessages,
+  latestMessages: {},
   setLatestMessage: (userId, value) => {},
   // chat messages
   chatMessages: {},
@@ -14,8 +12,6 @@ const initialState = {
   selectUser: (userId) => {}
 }
 
-export const LatestMessagesContext = createContext(initialState)
+export const ChatContext = createContext(initialState)
 
-export const LatestMessagesProvider = LatestMessagesContext.Provider
-
-export { initialMessages } from './constants'
+export const ChatProvider = ChatContext.Provider

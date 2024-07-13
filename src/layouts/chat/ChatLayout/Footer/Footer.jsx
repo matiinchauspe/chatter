@@ -8,7 +8,7 @@ const Footer = ({ sendMessage, onChangeMessage, message }) => {
   }
 
   return (
-    <div className='messages__footer'>
+    <div className='chat__footer'>
       <input
         onKeyDown={onKeyDown}
         value={message}
@@ -16,7 +16,7 @@ const Footer = ({ sendMessage, onChangeMessage, message }) => {
         id='user-message-input'
         onChange={onChangeMessage}
       />
-      <div className='messages__footer__actions'>
+      <div className='chat__footer__actions'>
         <i className='far fa-smile' />
         <i className='fas fa-paperclip' />
         <i className='mdi mdi-ticket-outline' />
