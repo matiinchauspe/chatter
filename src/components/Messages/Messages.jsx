@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useParams } from 'wouter'
 import { io } from 'socket.io-client'
 import useSound from 'use-sound'
 
-import config from '@/config'
+import receive from '@/assets/receive.mp3'
+import send from '@/assets/send.mp3'
+
 import { USERS, EVENTS } from '@/constants'
 import { useLatestMessages } from '@/hooks'
 /* eslint-disable no-unused-vars */
@@ -18,22 +20,22 @@ import './_messages.scss'
 //   config.BOT_SERVER_ENDPOINT,
 //   { transports: ['websocket', 'polling', 'flashsocket'] }
 // );
-const socket = io('http://localhost:4001', {
+const socket = io('/', {
   transports: ['websocket', 'polling', 'flashsocket']
-  // query: {
-  //   userId,
-  // }
 })
 
 const Messages = () => {
   const [inputValue, setInputValue] = useState('')
   const [botTyping, setBotTyping] = useState(false)
 
+  // chat ref
+  const chatRef = useRef(null)
+
   const params = useParams()
   const senderUserId = params.userId
 
-  const [playSend] = useSound(config.SEND_AUDIO_URL)
-  const [playReceive] = useSound(config.RECEIVE_AUDIO_URL)
+  const [playSend] = useSound(send)
+  const [playReceive] = useSound(receive)
 
   const { setLatestMessage, chatMessages, setChatMessages, selectedUser } =
     useLatestMessages()
@@ -42,10 +44,9 @@ const Messages = () => {
     socket.emit(EVENTS.SENDER_ROOM, senderUserId)
 
     socket.on(EVENTS.BOT_MESSAGE, (message) => {
-      debugger // eslint-disable-line
       setLatestMessage(USERS.BOT, message)
       // selected user chats
-      setChatMessages(USERS.BOT, message)
+      setChatMessages({ userId: USERS.BOT, message })
       // bot typing state
       setBotTyping(false)
 
@@ -55,9 +56,14 @@ const Messages = () => {
     socket.on(EVENTS.USER_MESSAGE, (message) => {
       setLatestMessage(selectedUser.userId, message)
       // selected user chats
-      setChatMessages(USERS.ME, message)
+      setChatMessages({ userId: USERS.ME, message })
+    })
 
-      playReceive()
+    // private messages between users
+    socket.on('receive-user-private-message', ({ message, sender }) => {
+      // setLatestMessage(sender, message)
+      // selected user chats
+      setChatMessages({ userId: sender, message, userIdAsKey: true })
     })
 
     socket.on(EVENTS.BOT_TYPING, () => {
@@ -70,21 +76,35 @@ const Messages = () => {
     }
   }, [])
 
+  useLayoutEffect(() => {
+    const chatList = chatRef.current
+    if (chatList) {
+      chatList.scrollTo({
+        top: chatList.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }, [chatMessages[selectedUser.userId].length])
+
   const handleSendMessage = () => {
     if (!inputValue) {
       return
     }
 
-    // this one only will act for bot
+    // This one only will act for bot
     if (selectedUser.userId === USERS.BOT) {
       socket.emit(EVENTS.USER_MESSAGE, { message: inputValue, sender: senderUserId })
     } else {
-      // I need to do this for the other users
+      socket.emit('user-private-message', {
+        message: inputValue,
+        sender: senderUserId,
+        receiver: selectedUser.userId
+      })
     }
 
     setInputValue('')
     // sender user chats
-    setChatMessages(USERS.ME, inputValue)
+    setChatMessages({ userId: USERS.ME, message: inputValue })
 
     playSend()
   }
@@ -96,7 +116,7 @@ const Messages = () => {
   return (
     <div className='messages'>
       <Header />
-      <div className='messages__list' id='message-list'>
+      <div className='messages__list' id='message-list' ref={chatRef}>
         {(chatMessages[selectedUser.userId] || []).map((message, index) => (
           <Message
             key={message.id}

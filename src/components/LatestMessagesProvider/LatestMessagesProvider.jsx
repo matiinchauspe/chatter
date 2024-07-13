@@ -12,20 +12,6 @@ const LatestMessagesProvider = ({ children }) => {
     setLastMessages((prevMessages) => ({ ...prevMessages, [userId]: value }))
   }, [])
 
-  // selected user
-  const [bot] = userById(usersList, USERS.BOT)
-  const [selectedUser, setSelectedUser] = useState(() => bot)
-
-  const handleSelectUser = (userId) => {
-    const [userSelected] = userById(usersList, userId)
-
-    setSelectedUser(userSelected)
-    setChatMessages({
-      ...chatMessages,
-      [userSelected.userId]: chatMessages[userId] ?? []
-    })
-  }
-
   // chat messages
   const initialChatMessages = useMemo(() => {
     const messages = {}
@@ -39,12 +25,20 @@ const LatestMessagesProvider = ({ children }) => {
 
     return messages
   }, [])
+
   const [chatMessages, setChatMessages] = useState(initialChatMessages)
-  const handleSetChatMessages = useCallback((userId, message) => {
+
+  // selected user
+  const [bot] = userById(usersList, USERS.BOT)
+  const [selectedUser, setSelectedUser] = useState(() => bot)
+
+  const handleSetChatMessages = useCallback(({ userId, message, userIdAsKey = false }) => {
+    const chatMessagesKey = userIdAsKey ? userId : selectedUser.userId
+
     setChatMessages((prev) => ({
       ...prev,
-      [selectedUser.userId]: [
-        ...(prev[selectedUser.userId] ? prev[selectedUser.userId] : []),
+      [chatMessagesKey]: [
+        ...(prev[chatMessagesKey] ? prev[chatMessagesKey] : []),
         {
           id: randomIncrementalId(),
           user: userId,
@@ -53,6 +47,16 @@ const LatestMessagesProvider = ({ children }) => {
       ]
     }))
   }, [selectedUser.userId])
+
+  const handleSelectUser = (userId) => {
+    const [userSelected] = userById(usersList, userId)
+
+    setSelectedUser(userSelected)
+    setChatMessages({
+      ...chatMessages,
+      [userSelected.userId]: chatMessages[userId] ?? []
+    })
+  }
 
   console.log({ chatMessages })
   console.log({ selectedUser })

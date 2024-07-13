@@ -8,7 +8,7 @@ const initialState = {
   setLatestMessage: (userId, value) => {},
   // chat messages
   chatMessages: {},
-  setChatMessages: (userId, message) => {},
+  setChatMessages: ({ userId, message, userIdAsKey }) => {},
   // selected user
   selectedUser: {},
   selectUser: (userId) => {}
